@@ -2,8 +2,12 @@
   "name": "goit-node-rest-api",
   "type": "module",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./app.js",
-    "dev": "nodemon ./app.js"
+    "dev": "nodemon ./app.js",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject",
+    "lint:js": "eslint src/**/*.{js,jsx}"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -13,5 +17,11 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
-  }
+  },
+  "version": "1.0.0",
+  "description": "REST API: [Postman]",
+  "main": "app.js",
+  "keywords": [],
+  "author": "Dmytro Zhuk <dm.zhuk@gmail.com>",
+  "license": "ISC"
 }
