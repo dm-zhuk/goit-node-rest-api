@@ -4,7 +4,7 @@ import cors from "cors";
 
 import contactsRouter from "./routes/contactsRouter.js";
 
-const app = express();
+const app = express(); // app here == web-server
 
 app.use(morgan("tiny"));
 app.use(cors());
