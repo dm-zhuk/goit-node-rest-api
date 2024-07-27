@@ -51,14 +51,14 @@ async function removeContact(id) {
   return result;
 }
 
-async function updateContactById(id, data) {
+async function updateContactById(id, updatedData) {
   const allContacts = await listContacts();
   const index = allContacts.findIndex((item) => item.id === id);
   if (index === -1) {
     return null;
   }
 
-  allContacts[index] = { ...allContacts[index], ...data };
+  allContacts[index] = { ...allContacts[index], ...updatedData };
 
   await updateContacts(allContacts);
 
