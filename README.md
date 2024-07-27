@@ -20,7 +20,7 @@ GET /api/contacts
 
 GET /api/contacts/:id
 
-Викликає функцію-сервіс getContactById для роботи з json-файлом contacts.json
+Викликає функцію-сервіс getOneContact для роботи з json-файлом contacts.json
 Якщо контакт за id знайдений, повертає об'єкт контакту в json-форматі зі статусом 200
 Якщо контакт за id не знайдено, повертає json формату {"message": "Not found"} зі статусом 404
 
@@ -34,7 +34,7 @@ POST /api/contacts
 
 Отримує body в json-форматі з полями {name, email, phone}. Усі поля є обов'язковими - для валідації створи у файлі contactsSchemas.js (знаходиться у папці schemas) схему з використаням пакета joi
 Якщо в body немає якихось обов'язкових полів (або передані поля мають не валідне значення), повертає json формату {"message": error.message} (де error.message - змістовне повідомлення з суттю помилки) зі статусом 400
-Якщо body валідне, викликає функцію-сервіс addContact для роботи з json-файлом contacts.json, з передачею їй даних з body
+Якщо body валідне, викликає функцію-сервіс createContact для роботи з json-файлом contacts.json, з передачею їй даних з body
 За результатом роботи функції повертає новостворений об'єкт з полями {id, name, email, phone} і статусом 201
 
 PUT /api/contacts/:id
