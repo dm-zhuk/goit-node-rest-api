@@ -1,5 +1,5 @@
 import * as contactsService from "../services/contactsServices.js";
-import HttpError from "../helpers/HttpError.js";
+import HttpError, { validateReqBody } from "../helpers/HttpError.js";
 import {
   createContactSchema,
   updateContactSchema,
@@ -61,19 +61,26 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   try {
-    const { error } = updateContactSchema.validate(req.body);
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    validateReqBody(updatedData);
+
+    const { error } = await updateContactSchema.validate(updatedData);
     if (error) {
       throw HttpError(400, error.message);
     }
 
-    const { id } = req.params;
+    const updatedContact = await contactsService.updateContactById(
+      id,
+      updatedData
+    );
 
-    const result = await contactsService.updateContactById(id, req.body);
-    if (!result) {
-      throw HttpError(404, error.message);
+    if (!updatedContact) {
+      throw HttpError(404, `Contact with id: ${id} not found`);
     }
 
-    res.json(result);
+    res.json(updatedContact);
   } catch (error) {
     next(error);
   }
