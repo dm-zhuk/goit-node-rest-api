@@ -1,87 +1,59 @@
-import * as contactsService from "../services/contactsServices.js";
-import HttpError, { validateReqBody } from "../helpers/HttpError.js";
-import {
-  createContactSchema,
-  updateContactSchema,
-} from "../schemas/contactsSchemas.js";
+import * as s from "../services/contactsServices.js";
+import HttpError from "../helpers/HttpError.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
 
-export const getAllContacts = async (req, res, next) => {
-  try {
-    const result = await contactsService.getAllContacts();
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
+const listContacts = async (req, res) => {
+  const result = await s.listContacts();
+  res.json(result);
 };
 
-export const getOneContact = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const result = await contactsService.getOneContact(id);
-    if (!result) {
-      throw HttpError(404, `Contact with id: ${id} not found`);
-    }
-    res.json(result);
-  } catch (error) {
-    next(error);
+const getOneContact = async (req, res) => {
+  const { id } = req.params;
+  const result = await s.getOneContact(id);
+  if (!result) {
+    throw HttpError(404, `Contact with id: ${id} not found`);
   }
+  res.json(result);
 };
 
-export const deleteContact = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const result = await contactsService.removeContact(id);
-    if (!result) {
-      throw HttpError(404, `Contact with id: ${id} not found`);
-    }
-
-    res.json({
-      "Contact delete success": result,
-    });
-  } catch (error) {
-    next(error);
+const deleteContact = async (req, res) => {
+  const { id } = req.params;
+  const result = await s.removeContact(id);
+  if (!result) {
+    throw HttpError(404, `Contact with id: ${id} not found`);
   }
+
+  res.json({
+    "Contact delete success": result,
+  });
 };
 
-export const createContact = async (req, res, next) => {
-  console.log(req.body);
-  try {
-    const { error } = createContactSchema.validate(req.body);
-    if (error) {
-      throw HttpError(400, error.message);
-    }
+const createContact = async (req, res) => {
+  const result = await s.createContact(req.body);
 
-    const result = await contactsService.createContact(req.body);
-
-    res.status(201).json(result);
-  } catch (error) {
-    next(error);
-  }
+  res.status(201).json(result);
 };
 
-export const updateContact = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const updatedData = req.body;
+const updateContact = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
 
-    validateReqBody(updatedData);
+  EmptyRequestBodyError(updatedData);
 
-    const { error } = await updateContactSchema.validate(updatedData);
-    if (error) {
-      throw HttpError(400, error.message);
-    }
+  const updatedContact = await s.updateContactById(id, updatedData);
 
-    const updatedContact = await contactsService.updateContactById(
-      id,
-      updatedData
-    );
-
-    if (!updatedContact) {
-      throw HttpError(404, `Contact with id: ${id} not found`);
-    }
-
-    res.json(updatedContact);
-  } catch (error) {
-    next(error);
+  if (!updatedContact) {
+    throw HttpError(404, `Contact with id: ${id} not found`);
   }
+
+  res.json(updatedContact);
+};
+
+export default {
+  listContacts: ctrlWrapper(listContacts),
+  getOneContact: ctrlWrapper(getOneContact),
+  deleteContact: ctrlWrapper(deleteContact),
+  createContact: ctrlWrapper(createContact),
+  updateContact: ctrlWrapper(updateContact),
 };
