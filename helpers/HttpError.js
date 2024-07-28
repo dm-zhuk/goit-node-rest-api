@@ -6,12 +6,6 @@ const messageList = {
   409: "Conflict",
 };
 
-export const validateReqBody = (body) => {
-  if (Object.keys(body).length === 0) {
-    throw HttpError(400, "Body must have at least one field");
-  }
-};
-
 const HttpError = (status, message = messageList[status]) => {
   const error = new Error(message);
   error.status = status;
