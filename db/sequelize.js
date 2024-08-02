@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 
-const {
+/* const {
   DATABASE_DIALECT,
   DATABASE_USER,
   DATABASE_NAME,
@@ -17,7 +17,19 @@ export const databaseConfig = {
   port: DATABASE_PORT,
   dialect: DATABASE_DIALECT,
   dialectOptions: {
-    ssl: false, // Disable SSL
+    ssl: true,
+  },
+}; */
+
+export const databaseConfig = {
+  database: "db_contacts_xpce",
+  username: "dmzhuk",
+  password: "O7JFO0xyBbFWvyrG3aN3awKvUbAB8eeZ",
+  host: "dpg-cqmfn3rqf0us73ac8u7g-a.frankfurt-postgres.render.com",
+  port: "5432",
+  dialect: "postgres",
+  dialectOptions: {
+    ssl: true,
   },
 };
 
