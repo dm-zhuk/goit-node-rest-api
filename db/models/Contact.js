@@ -1,5 +1,4 @@
 import { DataTypes } from "sequelize";
-
 import sequelize from "../sequelize.js";
 
 const Contact = sequelize.define("contact", {
@@ -20,6 +19,7 @@ const Contact = sequelize.define("contact", {
     defaultValue: false,
   },
 });
-Contact.sync({ force: true });
+
+// Contact.sync({ force: true });
 
 export default Contact;
