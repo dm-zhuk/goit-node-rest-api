@@ -2,8 +2,9 @@ import * as s from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
+import Contact from "../db/models/Contact.js";
 
-const listContacts = async (req, res) => {
+const listContacts = async (_, res) => {
   const result = await s.listContacts();
   res.json(result);
 };
