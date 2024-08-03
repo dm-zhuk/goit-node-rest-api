@@ -1,13 +1,12 @@
 import { Sequelize } from "sequelize";
-import { databaseConfig } from "./config.js";
 
 const sequelize = new Sequelize({
-  username: databaseConfig.username,
-  database: databaseConfig.database,
-  password: databaseConfig.password,
-  host: databaseConfig.host,
-  port: databaseConfig.port,
-  dialect: databaseConfig.dialect,
+  database: "db_contacts_xpce",
+  username: "dmzhuk",
+  password: "O7JFO0xyBbFWvyrG3aN3awKvUbAB8eeZ",
+  host: "dpg-cqmfn3rqf0us73ac8u7g-a.frankfurt-postgres.render.com",
+  port: "5432",
+  dialect: "postgres",
   dialectOptions: {
     ssl: true,
   },
