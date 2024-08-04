@@ -53,13 +53,12 @@ const updateStatusContact = async (req, res) => {
 
   EmptyRequestBodyError({ favorite });
 
-  const [updated] = await s.updateContactById(id, { favorite });
-  if (!updated) {
+  const updatedStatus = await s.updateContactById(id, { favorite });
+  if (!updatedStatus) {
     throw HttpError(404, `Contact with id: ${id} not found`);
   }
 
-  const updatedContact = await s.getOneContact(id);
-  res.json(updatedContact);
+  res.json(updatedStatus);
 };
 
 export default {
