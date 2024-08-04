@@ -26,7 +26,7 @@ contactsRouter.put("/:id", updMiddleWare, contactsControllers.updateContact);
 contactsRouter.patch("/:id", updMiddleWare, contactsControllers.updateContact);
 
 contactsRouter.patch(
-  "/:contactId/favorite",
+  "/:id/favorite",
   favoriteMiddleware,
   contactsControllers.updateStatusContact
 );
