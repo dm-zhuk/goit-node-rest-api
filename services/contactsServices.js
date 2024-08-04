@@ -1,15 +1,15 @@
-import Contact from "../db/models/Contact.js";
+import dbContacts from "../db/models/dbContacts.js";
 
-const listContacts = () => Contact.findAll();
+const listContacts = () => dbContacts.findAll();
 
-const getOneContact = (id) => Contact.findByPk(id);
+const getOneContact = (id) => dbContacts.findByPk(id);
 
-const createContact = (data) => Contact.create(data);
+const createContact = (data) => dbContacts.create(data);
 
-const removeContact = async (id) => Contact.destroy({ where: { id } });
+const removeContact = async (id) => dbContacts.destroy({ where: { id } });
 
 const updateContactById = async (id, updatedData) =>
-  Contact.update(updatedData, { where: { id } });
+  dbContacts.update(updatedData, { where: { id } });
 
 export {
   listContacts,
