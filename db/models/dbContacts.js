@@ -20,4 +20,6 @@ const dbContacts = sequelize.define("contact", {
   },
 });
 
+// dbContacts.sync();
+
 export default dbContacts;
