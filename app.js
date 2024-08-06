@@ -1,8 +1,13 @@
+import authRouter from "./routes/authRouter.js";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import sequelize from "./db/sequelize.js";
-import contactsRouter from "./routes/contactsRouter.js";
+import passportJWT from "passport-jwt";
+import jwt from "jsonwebtoken";
+import authSchema from "./schemas/authSchemas.js";
+import User from "./db/models/User.js";
+import "dotenv/config";
 
 const app = express();
 
@@ -10,7 +15,37 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/contacts", contactsRouter);
+const hashPassword = async (password) => {
+  const result = await bcryptjs.hash(password, 10);
+};
+
+const { JWT_SECRET } = process.env;
+const payload = { id: 25 };
+const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "12h" });
+console.log(token);
+
+/* const ExtractJWT = passportJWT.ExtractJwt;
+const Strategy = passportJWT.Strategy;
+const params = {
+  secretOrKey: secret,
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+};
+
+// JWT Strategy
+passport.use(
+  new Strategy(params, function (payload, done) {
+    User.find({ _id: payload.id })
+      .then(([user]) => {
+        if (!user) {
+          return done(new Error("User not found"));
+        }
+        return done(null, user);
+      })
+      .catch((err) => done(err));
+  })
+); */
+
+app.use("/api/User", authRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

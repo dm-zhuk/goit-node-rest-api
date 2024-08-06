@@ -1,12 +1,25 @@
-import JWT from "passport-jwt";
+import Joi from "joi";
+import { emailRegexp } from "../constants/authConstants.js";
 
+const authSignupSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+  password: Joi.string().min(6).required(),
+});
+
+export default authSignupSchema;
+
+/* 
 const jwt = require("jsonwebtoken");
 const secretKey = "here-the-key";
 
 function generateJWT(user) {
-  const payload = { userId: user.id, username: user.username, role: user.role };
+  const payload = {
+    userId: user.id,
+    username: user.username,
+    role: user.role,
+  };
 }
-const options = { expiresIn: "1h" };
+const options = { expiresIn: "1w" };
 const token = jwt.sign(payload, secretKey, options);
 return token;
 
@@ -54,9 +67,7 @@ const authSchema = JWT.object({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-});
-
-export default authSchema;
+}); */
 
 // Example of JSON header:
 /* {
