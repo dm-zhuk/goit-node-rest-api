@@ -5,11 +5,22 @@ const users = sequelize.define("user", {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+    required: [true, "Password is required"],
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
+    required: [true, "Email is required"],
+  },
+  subscription: {
+    type: DataTypes.STRING,
+    enum: ["starter", "pro", "business"],
+    default: "starter",
+  },
+  token: {
+    type: DataTypes.STRING,
+    default: null,
   },
 });
 
@@ -17,25 +28,19 @@ const users = sequelize.define("user", {
 
 export default users;
 
-/* password: {
-        type: DataTypes.STRING,
-    required: [true, "Password is required"],
-  },
-  email: {
-        type: DataTypes.STRING,
-    required: [true, "Email is required"],
-    unique: true,
-  },
-  subscription: {
-        type: DataTypes.STRING,
-    enum: ["starter", "pro", "business"],
-    default: "starter",
-  },
-  token: {
-        type: DataTypes.STRING,
-    default: null,
-  },
+/* 
   owner: {
     type: Schema.Types.ObjectId,
     ref: "users",
-  }, */
+  },
+  
+  // check this out
+
+  ownerId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: "users",
+      key: "id",
+    },
+  },*/

@@ -1,19 +1,20 @@
+import bcryptjs from "bcryptjs";
 import users from "../db/models/users.js";
 
-// const getAll = () => users.findAll(users, { order: [["id", "asc"]] });
+export const findUser = (query) => users.findOne({ where: query });
 
 export const register = async (data) => {
   try {
-    const newUser = await users.create(data);
+    const { password } = data;
+    const hashPassword = await bcryptjs.hash(password, 10);
+    const newUser = await users.create({ ...data, password: hashPassword });
     return newUser;
   } catch (error) {
     if (error?.parent?.code === "23505") {
-      // console.error(error.parent.code);
-      // console.error(error.parent.detail);
-      error.message();
+      error.message = "Email in use";
+    } else if (error) {
+      error.message = "Error from Joi or other validation library";
     }
     throw error;
   }
 };
-
-// export { getAll, register };

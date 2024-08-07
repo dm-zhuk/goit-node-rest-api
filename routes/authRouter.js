@@ -7,8 +7,8 @@ const registerMiddleWare = validateBody(registerSchema);
 
 const authRouter = Router();
 
-// authRouter.get("/", authControllers.users);
-authRouter.get("/register", registerMiddleWare, authControllers.register);
 authRouter.post("/register", registerMiddleWare, authControllers.register);
+authRouter.post("/login", registerMiddleWare, authControllers.login);
+// authRouter.post("/logout", registerMiddleWare, authControllers.logout);
 
 export default authRouter;
