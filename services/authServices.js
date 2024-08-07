@@ -1,8 +1,10 @@
-import User from "../db/models/User.js";
+import users from "../db/models/users.js";
 
-export const signup = async (data) => {
+// const getAll = () => users.findAll(users, { order: [["id", "asc"]] });
+
+export const register = async (data) => {
   try {
-    const newUser = await User.create(data);
+    const newUser = await users.create(data);
     return newUser;
   } catch (error) {
     if (error?.parent?.code === "23505") {
@@ -13,3 +15,5 @@ export const signup = async (data) => {
     throw error;
   }
 };
+
+// export { getAll, register };

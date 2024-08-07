@@ -1,12 +1,14 @@
 import { Router } from "express";
 import authControllers from "../controllers/authControllers.js";
 import validateBody from "../decorators/validateBody.js";
-import authSignupSchema from "../schemas/authSchemas.js";
+import registerSchema from "../schemas/authSchemas.js";
 
-const signupMiddleWare = validateBody(authSignupSchema);
+const registerMiddleWare = validateBody(registerSchema);
 
 const authRouter = Router();
 
-authRouter.post("/signup", signupMiddleWare, authControllers.signup);
+// authRouter.get("/", authControllers.users);
+authRouter.get("/register", registerMiddleWare, authControllers.register);
+authRouter.post("/register", registerMiddleWare, authControllers.register);
 
 export default authRouter;

@@ -6,7 +6,7 @@ import sequelize from "./db/sequelize.js";
 import passportJWT from "passport-jwt";
 import jwt from "jsonwebtoken";
 import authSchema from "./schemas/authSchemas.js";
-import User from "./db/models/User.js";
+import users from "./db/models/users.js";
 import "dotenv/config";
 
 const app = express();
@@ -34,10 +34,10 @@ const params = {
 // JWT Strategy
 passport.use(
   new Strategy(params, function (payload, done) {
-    User.find({ _id: payload.id })
+    users.find({ _id: payload.id })
       .then(([user]) => {
         if (!user) {
-          return done(new Error("User not found"));
+          return done(new Error("users not found"));
         }
         return done(null, user);
       })
@@ -45,7 +45,7 @@ passport.use(
   })
 ); */
 
-app.use("/api/User", authRouter);
+app.use("/api/user", authRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

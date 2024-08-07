@@ -7,7 +7,8 @@ const ctrlWrapper = (ctrl) => {
       await ctrl(req, res, next);
     } catch (error) {
       if (error?.parent?.code === "23505") {
-        return next(HttpError(409, error.parent.detail));
+        // return next(HttpError(409, error.parent.detail));
+        return next(HttpError(409, "Email in use"));
       }
       if (error instanceof ValidationError) {
         return next(HttpError(400, error.message));

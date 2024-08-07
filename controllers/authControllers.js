@@ -3,8 +3,8 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 import bcryptjs from "bcryptjs";
 
-const signup = async (req, res) => {
-  const newUser = await authServices.signup(req.body);
+const register = async (req, res) => {
+  const newUser = await authServices.register(req.body);
 
   res.status(201).json({
     email: newUser.email,
@@ -29,6 +29,6 @@ const signin = async (req, res) => {
 };
 
 export default {
-  signup: ctrlWrapper(signup),
+  register: ctrlWrapper(register),
   signin: ctrlWrapper(signin),
 };
