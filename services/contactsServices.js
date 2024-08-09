@@ -1,6 +1,16 @@
 import dbContacts from "../db/models/dbContacts.js";
 
-const listContacts = () => dbContacts.findAll({ order: [["id", "asc"]] });
+const getContacts = ({ page = 1, limit = 20 }, query = {}) => {
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
+
+  return dbContacts.findAll({
+    where: query,
+    offset,
+    limit: normalizedLimit,
+    order: [["id", "asc"]],
+  });
+};
 
 const getOneContact = (id) => dbContacts.findByPk(id);
 
@@ -26,7 +36,7 @@ const updateStatusContact = async (id, { favorite }) => {
 };
 
 export {
-  listContacts,
+  getContacts,
   getOneContact,
   createContact,
   removeContact,

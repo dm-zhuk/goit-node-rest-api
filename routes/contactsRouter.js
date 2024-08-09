@@ -13,7 +13,7 @@ const favoriteMiddleware = validateBody(updateFavoriteSchema);
 
 const contactsRouter = Router();
 
-contactsRouter.get("/", contactsControllers.listContacts);
+contactsRouter.get("/", contactsControllers.getContacts);
 
 contactsRouter.get("/:id", contactsControllers.getOneContact);
 

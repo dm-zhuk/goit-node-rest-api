@@ -1,37 +1,46 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
+import { emailRegexp } from "../../constants/authConstants.js";
 
-const users = sequelize.define("user", {
+const User = sequelize.define("user", {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
-    required: [true, "Password is required"],
+    required: [true, "Set password for user"],
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     required: [true, "Email is required"],
+    unique: true,
+    validate: {
+      isEmail(value) {
+        if (!emailRegexp.test(value)) {
+          throw new Error("Email not validated");
+        }
+      },
+    },
   },
   subscription: {
     type: DataTypes.STRING,
+    allowNull: false,
     enum: ["starter", "pro", "business"],
     default: "starter",
   },
   token: {
     type: DataTypes.STRING,
-    default: null,
+    allowNull: true,
   },
 });
 
-// users.sync();
+// User.sync({ force: true });
 
-export default users;
+export default User;
 
 /* 
   owner: {
     type: Schema.Types.ObjectId,
-    ref: "users",
+    ref: "User",
   },
   
   // check this out
@@ -40,7 +49,7 @@ export default users;
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: "users",
+      model: "User",
       key: "id",
     },
   },*/

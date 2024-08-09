@@ -3,8 +3,8 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
 
-const listContacts = async (_, res) => {
-  const result = await s.listContacts();
+const getContacts = async (_, res) => {
+  const result = await s.getContacts();
   res.json(result);
 };
 
@@ -62,7 +62,7 @@ const updateStatusContact = async (req, res) => {
 };
 
 export default {
-  listContacts: ctrlWrapper(listContacts),
+  getContacts: ctrlWrapper(getContacts),
   getOneContact: ctrlWrapper(getOneContact),
   deleteContact: ctrlWrapper(deleteContact),
   createContact: ctrlWrapper(createContact),
