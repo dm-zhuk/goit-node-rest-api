@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import HttpError from "..//helpers/HttpError.js";
+import HttpError from "../helpers/HttpError.js";
 import { findUser } from "../services/authServices.js";
 
 const { JWT_SECRET } = process.env;
@@ -8,24 +8,23 @@ const authenticate = async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return next(HttpError(401, error.message));
+    return next(HttpError(401, "Authorization header missing"));
   }
-  res.status(409).json({ message: error.message });
-  const [bearer, token] = authorization.split("");
+
+  const [bearer, token] = authorization.split(" ");
 
   if (bearer !== "Bearer") {
-    return next(HttpError(401, error.message));
+    return next(HttpError(401, "Invalid authorization format"));
   }
 
   try {
     const { id } = jwt.verify(token, JWT_SECRET);
     const user = await findUser({ id });
-    if (!user) {
-      return next(HttpError(401, error.message));
+
+    if (!user || user.token !== token) {
+      return next(HttpError(401, "User not found or token mismatch"));
     }
-    if (!user.token || user.token !== token) {
-      return next(HttpError(401, error.message));
-    }
+
     req.user = user;
     next();
   } catch (error) {

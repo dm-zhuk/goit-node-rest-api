@@ -3,6 +3,7 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { getContacts } from "../services/contactsServices.js";
 import "dotenv/config";
 
 const { JWT_SECRET } = process.env;
@@ -12,14 +13,16 @@ const register = async (req, res, next) => {
     const newUser = await authServices.register(req.body);
 
     res.status(201).json({
-      email: newUser.email,
-      subscription: newUser.subscription || "starter",
+      user: {
+        email: newUser.email,
+        subscription: newUser.subscription || "starter",
+      },
     });
   } catch (error) {
     if (error?.message === "Email in use") {
       return res.status(409).json({ message: error.message });
     }
-    next(HttpError(400, "Error from Joi or other validation library"));
+    next(error);
   }
 };
 
@@ -34,26 +37,31 @@ const login = async (req, res) => {
     throw HttpError(401, "Email or password is wrong");
   }
   const { id } = user;
-  const users = await getUsers({ owner: id });
+  const contacts = await getContacts({ owner: id });
   const payload = { id };
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "12h" });
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
   await authServices.updateUser({ id }, { token });
 
-  res.json({ token, user: { email, subscription: user.subscription } });
+  res.json({
+    token,
+    user: { email, subscription: user.subscription || "starter", contacts },
+  });
 };
 
 const logout = async (req, res) => {
   const { id } = req.user;
   await authServices.updateUser({ id }, { token: "" });
 
-  res.json({ message: "No Content" });
+  res.status(204).send();
 };
 
 const getCurrent = async (req, res) => {
-  const { email, id } = req.user;
-  const users = await getUsers({ owner: id });
+  const { email, subscription } = req.user;
 
-  res.json({ user: { email, subscription: user.subscription } });
+  res.json({
+    email,
+    subscription,
+  });
 };
 
 export default {

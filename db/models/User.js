@@ -23,7 +23,7 @@ const User = sequelize.define("user", {
   },
   subscription: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     enum: ["starter", "pro", "business"],
     default: "starter",
   },
@@ -36,20 +36,3 @@ const User = sequelize.define("user", {
 // User.sync({ force: true });
 
 export default User;
-
-/* 
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  
-  // check this out
-
-  ownerId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    references: {
-      model: "User",
-      key: "id",
-    },
-  },*/

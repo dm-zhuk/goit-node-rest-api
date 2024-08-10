@@ -12,21 +12,18 @@ const getContacts = ({ page = 1, limit = 20 }, query = {}) => {
   });
 };
 
-const getOneContact = (id) => dbContacts.findByPk(id);
+const getOneContact = (query) => dbContacts.findOne({ where: query });
 
 const createContact = (data) => dbContacts.create(data);
 
-const removeContact = async (id) => {
-  const removedContact = await getOneContact(id);
-  dbContacts.destroy({ where: { id } });
+const removeContact = async (query) => dbContacts.destroy({ where: query });
 
-  return removedContact;
-};
-
-const updateContactById = async (id, updatedData) => {
-  await dbContacts.update(updatedData, { where: { id } });
-
-  return await getOneContact(id);
+const updateContact = async (query, updatedData) => {
+  const contact = await getOneContact(query);
+  if (!contact) {
+    return null;
+  }
+  return dbContacts.update(updatedData, { returning: true });
 };
 
 const updateStatusContact = async (id, { favorite }) => {
@@ -40,6 +37,6 @@ export {
   getOneContact,
   createContact,
   removeContact,
-  updateContactById,
+  updateContact,
   updateStatusContact,
 };

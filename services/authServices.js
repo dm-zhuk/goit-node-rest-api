@@ -20,8 +20,6 @@ export const register = async (data) => {
   } catch (error) {
     if (error?.parent?.code === "23505") {
       error.message = "Email in use";
-    } else if (error) {
-      error.message = "Error from Joi or other validation library";
     }
     throw error;
   }

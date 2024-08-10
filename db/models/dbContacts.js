@@ -1,4 +1,4 @@
-import { DataTypes, Schema } from "sequelize";
+import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 
 const dbContacts = sequelize.define("contact", {
@@ -19,11 +19,11 @@ const dbContacts = sequelize.define("contact", {
     defaultValue: false,
   },
   owner: {
-    type: Schema.Types.ObjectId,
-    ref: "user",
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
 });
 
-dbContacts.sync({ force: true });
+// dbContacts.sync({ force: true });
 
 export default dbContacts;
