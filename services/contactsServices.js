@@ -1,35 +1,34 @@
 import dbContacts from "../db/models/dbContacts.js";
 
-const listContacts = () => dbContacts.findAll({ order: [["id", "asc"]] });
+export const getAllContacts = (query = {}, options = {}) => {
+  const { page = 1, limit = 20 } = options;
+  const normalizedLimit = Number(limit);
+  const offset = (Number(page) - 1) * normalizedLimit;
 
-const getOneContact = (id) => dbContacts.findByPk(id);
+  return dbContacts.findAll({
+    where: query,
+    offset,
+    limit: normalizedLimit,
+    order: [["id", "asc"]],
+  });
+};
+export const getOneContact = (query) => dbContacts.findOne({ where: query });
 
-const createContact = (data) => dbContacts.create(data);
+export const createContact = (data) => dbContacts.create(data);
 
-const removeContact = async (id) => {
-  const removedContact = await getOneContact(id);
-  dbContacts.destroy({ where: { id } });
+export const removeContact = async (query) =>
+  dbContacts.destroy({ where: query });
 
-  return removedContact;
+export const updateContact = async (query, updatedData) => {
+  const contact = await getOneContact(query);
+  if (!contact) {
+    return null;
+  }
+  return dbContacts.update(updatedData, { returning: true });
 };
 
-const updateContactById = async (id, updatedData) => {
-  await dbContacts.update(updatedData, { where: { id } });
-
-  return await getOneContact(id);
-};
-
-const updateStatusContact = async (id, { favorite }) => {
+export const updateStatusContact = async (id, { favorite }) => {
   await dbContacts.update({ favorite }, { where: { id } });
 
   return await getOneContact(id);
-};
-
-export {
-  listContacts,
-  getOneContact,
-  createContact,
-  removeContact,
-  updateContactById,
-  updateStatusContact,
 };

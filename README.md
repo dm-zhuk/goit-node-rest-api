@@ -15,7 +15,7 @@ npm i
 REST API повинен підтримувати такі раути:
 GET /api/contacts
 
-Викликає функцію-сервіс listContacts для роботи з json-файлом contacts.json
+Викликає функцію-сервіс getContacts для роботи з json-файлом contacts.json
 Повертає масив всіх контактів в json-форматі зі статусом 200
 
 GET /api/contacts/:id

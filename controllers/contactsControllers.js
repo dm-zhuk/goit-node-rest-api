@@ -3,23 +3,35 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
 
-const listContacts = async (_, res) => {
-  const result = await s.listContacts();
+const getContacts = async (req, res) => {
+  const { id: owner } = req.user;
+  const { page = 1, limit = 20 } = req.query;
+  const result = await s.getAllContacts({ owner }, { page, limit });
+  res.json(result);
+};
+
+const getTrueFavorites = async (req, res) => {
+  const { id: owner } = req.user;
+  const result = await s.getAllContacts({ owner, favorite: true });
   res.json(result);
 };
 
 const getOneContact = async (req, res) => {
   const { id } = req.params;
-  const result = await s.getOneContact(id);
+  const { id: owner } = req.user;
+
+  const result = await s.getOneContact({ id, owner });
   if (!result) {
-    throw HttpError(404, `Contact with id: ${id} not found`);
+    throw HttpError(404, `Contact with id ${id} not found`);
   }
   res.json(result);
 };
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const result = await s.removeContact(id);
+  const { id: owner } = req.user;
+
+  const result = await s.removeContact({ id, owner });
   if (!result) {
     throw HttpError(404, `Contact with id: ${id} not found`);
   }
@@ -30,17 +42,21 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
-  const result = await s.createContact(req.body);
+  const { id: owner } = req.user;
+
+  const result = await s.createContact({ ...req.body, owner });
   res.status(201).json(result);
 };
 
-const updateContact = async (req, res) => {
+const updateContactById = async (req, res) => {
   const { id } = req.params;
+  const { id: owner } = req.user;
+
   const updatedData = req.body;
 
   EmptyRequestBodyError(updatedData);
 
-  const updatedContact = await s.updateContactById(id, updatedData);
+  const updatedContact = await s.updateContact({ id, owner }, updatedData);
   if (!updatedContact) {
     throw HttpError(404, `Contact with id: ${id} not found`);
   }
@@ -50,10 +66,11 @@ const updateContact = async (req, res) => {
 const updateStatusContact = async (req, res) => {
   const { id } = req.params;
   const { favorite } = req.body;
+  const { id: owner } = req.user;
 
   EmptyRequestBodyError({ favorite });
 
-  const updatedStatus = await s.updateContactById(id, { favorite });
+  const updatedStatus = await s.updateContact({ id, owner }, { favorite });
   if (!updatedStatus) {
     throw HttpError(404, `Contact with id: ${id} not found`);
   }
@@ -62,10 +79,11 @@ const updateStatusContact = async (req, res) => {
 };
 
 export default {
-  listContacts: ctrlWrapper(listContacts),
+  getContacts: ctrlWrapper(getContacts),
   getOneContact: ctrlWrapper(getOneContact),
   deleteContact: ctrlWrapper(deleteContact),
   createContact: ctrlWrapper(createContact),
-  updateContact: ctrlWrapper(updateContact),
+  updateContactById: ctrlWrapper(updateContactById),
   updateStatusContact: ctrlWrapper(updateStatusContact),
+  getTrueFavorites: ctrlWrapper(getTrueFavorites),
 };

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authenticate from "../middlewares/authenticate.js";
 import contactsControllers from "../controllers/contactsControllers.js";
 import validateBody from "../decorators/validateBody.js";
 import {
@@ -12,8 +13,11 @@ const updMiddleWare = validateBody(updateContactSchema);
 const favoriteMiddleware = validateBody(updateFavoriteSchema);
 
 const contactsRouter = Router();
+contactsRouter.use(authenticate);
 
-contactsRouter.get("/", contactsControllers.listContacts);
+contactsRouter.get("/", contactsControllers.getContacts);
+
+contactsRouter.get("/favorites", contactsControllers.getTrueFavorites);
 
 contactsRouter.get("/:id", contactsControllers.getOneContact);
 
@@ -21,9 +25,17 @@ contactsRouter.delete("/:id", contactsControllers.deleteContact);
 
 contactsRouter.post("/", addMiddleWare, contactsControllers.createContact);
 
-contactsRouter.put("/:id", updMiddleWare, contactsControllers.updateContact);
+contactsRouter.put(
+  "/:id",
+  updMiddleWare,
+  contactsControllers.updateContactById
+);
 
-contactsRouter.patch("/:id", updMiddleWare, contactsControllers.updateContact);
+contactsRouter.patch(
+  "/:id",
+  updMiddleWare,
+  contactsControllers.updateContactById
+);
 
 contactsRouter.patch(
   "/:id/favorite",
