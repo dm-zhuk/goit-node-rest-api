@@ -22,13 +22,13 @@ const authenticate = async (req, res, next) => {
     const user = await findUser({ id });
 
     if (!user || user.token !== token) {
-      return next(HttpError(401, "User not found or token mismatch"));
+      return next(HttpError(401, "Not authorized"));
     }
 
     req.user = user;
     next();
   } catch (error) {
-    next(HttpError(401, error.message));
+    next(HttpError(401, "Not authorized"));
   }
 };
 

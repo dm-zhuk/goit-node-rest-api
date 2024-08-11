@@ -3,7 +3,7 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { getContacts } from "../services/contactsServices.js";
+import { getAllContacts } from "../services/contactsServices.js";
 import "dotenv/config";
 
 const { JWT_SECRET } = process.env;
@@ -36,10 +36,13 @@ const login = async (req, res) => {
   if (!passwordCompare) {
     throw HttpError(401, "Email or password is wrong");
   }
+
   const { id } = user;
-  const contacts = await getContacts({ owner: id });
+  const contacts = await getAllContacts({ owner: id });
+
   const payload = { id };
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "48h" });
   await authServices.updateUser({ id }, { token });
 
   res.json({
@@ -52,7 +55,7 @@ const logout = async (req, res) => {
   const { id } = req.user;
   await authServices.updateUser({ id }, { token: "" });
 
-  res.status(204).send();
+  res.status(204).end();
 };
 
 const getCurrent = async (req, res) => {

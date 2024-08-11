@@ -17,6 +17,8 @@ contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsControllers.getContacts);
 
+contactsRouter.get("/favorites", contactsControllers.getTrueFavorites);
+
 contactsRouter.get("/:id", contactsControllers.getOneContact);
 
 contactsRouter.delete("/:id", contactsControllers.deleteContact);

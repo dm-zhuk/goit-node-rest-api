@@ -1,6 +1,7 @@
 import dbContacts from "../db/models/dbContacts.js";
 
-const getContacts = ({ page = 1, limit = 20 }, query = {}) => {
+export const getAllContacts = (query = {}, options = {}) => {
+  const { page = 1, limit = 20 } = options;
   const normalizedLimit = Number(limit);
   const offset = (Number(page) - 1) * normalizedLimit;
 
@@ -11,14 +12,14 @@ const getContacts = ({ page = 1, limit = 20 }, query = {}) => {
     order: [["id", "asc"]],
   });
 };
+export const getOneContact = (query) => dbContacts.findOne({ where: query });
 
-const getOneContact = (query) => dbContacts.findOne({ where: query });
+export const createContact = (data) => dbContacts.create(data);
 
-const createContact = (data) => dbContacts.create(data);
+export const removeContact = async (query) =>
+  dbContacts.destroy({ where: query });
 
-const removeContact = async (query) => dbContacts.destroy({ where: query });
-
-const updateContact = async (query, updatedData) => {
+export const updateContact = async (query, updatedData) => {
   const contact = await getOneContact(query);
   if (!contact) {
     return null;
@@ -26,17 +27,8 @@ const updateContact = async (query, updatedData) => {
   return dbContacts.update(updatedData, { returning: true });
 };
 
-const updateStatusContact = async (id, { favorite }) => {
+export const updateStatusContact = async (id, { favorite }) => {
   await dbContacts.update({ favorite }, { where: { id } });
 
   return await getOneContact(id);
-};
-
-export {
-  getContacts,
-  getOneContact,
-  createContact,
-  removeContact,
-  updateContact,
-  updateStatusContact,
 };

@@ -6,7 +6,13 @@ import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
 const getContacts = async (req, res) => {
   const { id: owner } = req.user;
   const { page = 1, limit = 20 } = req.query;
-  const result = await s.getContacts({ owner }, { page, limit });
+  const result = await s.getAllContacts({ owner }, { page, limit });
+  res.json(result);
+};
+
+const getTrueFavorites = async (req, res) => {
+  const { id: owner } = req.user;
+  const result = await s.getAllContacts({ owner, favorite: true });
   res.json(result);
 };
 
@@ -79,4 +85,5 @@ export default {
   createContact: ctrlWrapper(createContact),
   updateContactById: ctrlWrapper(updateContactById),
   updateStatusContact: ctrlWrapper(updateStatusContact),
+  getTrueFavorites: ctrlWrapper(getTrueFavorites),
 };
