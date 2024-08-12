@@ -24,8 +24,15 @@ const User = sequelize.define("user", {
   subscription: {
     type: DataTypes.STRING,
     allowNull: true,
-    enum: ["starter", "pro", "business"],
-    default: "starter",
+    validate: {
+      isValidSubscription(value) {
+        const validPlans = ["starter", "pro", "business"];
+        if (!validPlans.includes(value)) {
+          throw new Error("Invalid subscription plan");
+        }
+      },
+    },
+    defaultValue: "starter",
   },
   token: {
     type: DataTypes.STRING,
