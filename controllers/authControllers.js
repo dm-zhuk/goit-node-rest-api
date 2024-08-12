@@ -10,12 +10,13 @@ const { JWT_SECRET } = process.env;
 
 const register = async (req, res, next) => {
   try {
-    const newUser = await authServices.register(req.body);
+    const { subscription = "starter", ...userData } = req.body;
+    const newUser = await authServices.register({ ...userData, subscription });
 
     res.status(201).json({
       user: {
         email: newUser.email,
-        subscription: newUser.subscription || "starter",
+        subscription: newUser.subscription,
       },
     });
   } catch (error) {
@@ -47,7 +48,7 @@ const login = async (req, res) => {
 
   res.json({
     token,
-    user: { email, subscription: user.subscription || "starter", contacts },
+    user: { email, subscription: user.subscription, contacts },
   });
 };
 
@@ -67,9 +68,37 @@ const getCurrent = async (req, res) => {
   });
 };
 
+const changePlan = async (req, res, next) => {
+  const { user } = req;
+  const { subscription } = req.body;
+
+  if (!["starter", "pro", "business"].includes(subscription)) {
+    return next(HttpError(400, "Invalid subscription plan"));
+  }
+
+  try {
+    const updatedUser = await authServices.updateUser(
+      { id: user.id },
+      { subscription }
+    );
+
+    if (!updatedUser) {
+      return next(HttpError(404, "User not found"));
+    }
+
+    res.json({
+      email: updatedUser.email,
+      subscription: updatedUser.subscription,
+    });
+  } catch (error) {
+    next(HttpError(401, "Not authorized"));
+  }
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
+  changePlan: ctrlWrapper(changePlan),
 };
