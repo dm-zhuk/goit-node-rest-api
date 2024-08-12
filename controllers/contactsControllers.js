@@ -33,12 +33,10 @@ const deleteContact = async (req, res) => {
 
   const result = await s.removeContact({ id, owner });
   if (!result) {
-    throw HttpError(404, `Contact with id: ${id} not found`);
+    throw HttpError(404, `Contact with id ${id} not found`);
   }
 
-  res.json({
-    "Contact delete success": result,
-  });
+  res.json(`Contact with id ${id} removed successfuly`);
 };
 
 const createContact = async (req, res) => {
