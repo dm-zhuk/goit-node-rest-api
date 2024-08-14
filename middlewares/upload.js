@@ -1,13 +1,26 @@
 import multer from "multer";
+import path from "node:path";
+
+const destination = path.resolve("temp");
+
+/* const storage = multer.diskStorage({
+    destination,
+    filename = (req, file, callback) => {
+      const uniquePrefix
+  }
+  },
+});
+ */
+
+////
+import multer from "multer";
 import express from "../app.js";
 import HttpError from "../helpers/HttpError.js";
-
-// const upload = multer();
-const upload = multer({ dest: "uploads/" });
 
 // При переході по такому URL браузер відобразить зображення. Shell http://locahost:<порт>/avatars/<ім'я файлу з розширенням>
 
 /* const multer  = require('multer')
+const upload = multer({ dest: "uploads/" });
 const upload = multer({ dest: './public/data/uploads/' })
 app.post('/stats', upload.single('uploaded_file'), function (req, res) {
   // req.file is the name of your file in the form above, here 'uploaded_file'
@@ -37,5 +50,11 @@ const multer = async (req, res, next) => {
     next(HttpError(401, "Not authorized"));
   }; */
 };
+
+const upload = multer({
+  storage: storage,
+});
+
+upload.single("picture");
 
 export default multer;
