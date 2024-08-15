@@ -9,21 +9,24 @@ const avatarsPath = path.resolve("public", "avatars");
 
 const createContact = async (req, res) => {
   if (!req.file) {
-    throw new HttpError(400, "No file uploaded");
+    throw HttpError(400, "No file uploaded");
   }
 
   const { path: oldPath, filename } = req.file;
-  const newPath = path.join(avatarsPath, filename);
-  await fs.rename(oldPath, newPath);
-  const { id: owner } = req.user;
-  const avatar = path.join("avatars", filename);
-  const result = await s.createContact({ ...req.body, avatar, owner });
-  res.status(201).json(result);
+  console.log(oldPath);
+  console.log(filename);
+
+  // const newPath = path.join(avatarsPath, filename);
+  // await fs.rename(oldPath, newPath);
+  // const { id: owner } = req.user;
+  // const avatar = path.join("avatars", filename);
+  // const result = await s.createContact({ ...req.body, avatar, owner });
+  // res.status(201).json(result);
 };
 
 /* const createContact = async (req, res) => {
   if (!req.file) {
-    throw new HttpError(400, "No file uploaded");
+    throw HttpError(400, "No file uploaded");
   }
 
   const { path: oldPath, filename } = req.file;
@@ -34,10 +37,17 @@ const createContact = async (req, res) => {
   const avatar = path.join("avatars", filename);
   const result = await s.createContact({ ...req.body, avatar, owner });
   res.status(201).json(result);
-  console.log(oldPath);
   console.log(newPath);
   console.log(req.body);
-}; */
+}; 
+// -b auth:
+const createContact = async (req, res) => {
+  const { id: owner } = req.user;
+
+  const result = await s.createContact({ ...req.body, owner });
+  res.status(201).json(result);
+};
+*/
 
 const getContacts = async (req, res) => {
   const { id: owner } = req.user;
