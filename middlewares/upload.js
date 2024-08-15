@@ -1,60 +1,39 @@
 import multer from "multer";
 import path from "node:path";
+import HttpError from "../helpers/HttpError.js";
+import gravatar from "gravatar";
 
 const destination = path.resolve("temp");
 
-/* const storage = multer.diskStorage({
-    destination,
-    filename = (req, file, callback) => {
-      const uniquePrefix
-  }
+const storage = multer.diskStorage({
+  destination,
+  filename: (req, file, callback) => {
+    const uniquePrefix = `${Date.now()}_${Math.round(Math.random() * 1e9)}`;
+    const filename = `${uniquePrefix}_${file.originalname}`;
+    callback(null, filename);
   },
 });
- */
 
-////
-import multer from "multer";
-import express from "../app.js";
-import HttpError from "../helpers/HttpError.js";
+const limits = {
+  fileSize: 1024 * 1024 * 5,
+};
 
-// При переході по такому URL браузер відобразить зображення. Shell http://locahost:<порт>/avatars/<ім'я файлу з розширенням>
-
-/* const multer  = require('multer')
-const upload = multer({ dest: "uploads/" });
-const upload = multer({ dest: './public/data/uploads/' })
-app.post('/stats', upload.single('uploaded_file'), function (req, res) {
-  // req.file is the name of your file in the form above, here 'uploaded_file'
-  // req.body will hold the text fields, if there were any 
-  console.log(req.file, req.body)
-}); */
-
-const multer = async (req, res, next) => {
-  const {} = req;
-
-  /*  if () {
-    return next(HttpError(401, "Authorization header missing"));
+const fileFilter = (req, file, callback) => {
+  const extension = file.originalname.split(".").pop();
+  if (extension === "exe") {
+    return callback(HttpError(400, ".exe extension not allowed"));
   }
-
-  if () {
-    return next(HttpError(401, "Invalid authorization format"));
-  }
-
-  try {
-   
-    if () {
-      return next(HttpError(401, "Not authorized"));
-    }
-
-    next();
-  } catch (error) {
-    next(HttpError(401, "Not authorized"));
-  }; */
+  callback(null, true);
 };
 
 const upload = multer({
-  storage: storage,
+  storage,
+  limits,
+  fileFilter,
 });
 
-upload.single("picture");
+/* 
+gravatar avatar -h
+gravatar avatar somebody@example.com */
 
-export default multer;
+export default upload;
