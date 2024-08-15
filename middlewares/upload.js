@@ -1,7 +1,7 @@
 import multer from "multer";
 import path from "node:path";
 import HttpError from "../helpers/HttpError.js";
-import gravatar from "gravatar";
+// import gravatar from "gravatar";
 
 const destination = path.resolve("temp");
 

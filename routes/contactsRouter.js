@@ -26,7 +26,7 @@ contactsRouter.delete("/:id", contactsControllers.deleteContact);
 
 contactsRouter.post(
   "/",
-  upload.single("avatar"),
+  upload.single("avatarURL"),
   addMiddleWare,
   contactsControllers.createContact
 );
