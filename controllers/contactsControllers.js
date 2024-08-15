@@ -1,3 +1,7 @@
+/* gravatar avatar -h
+gravatar avatar somebody@example.com */
+
+import gravatar from "gravatar";
 import path from "node:path";
 import * as fs from "node:fs/promises";
 import * as s from "../services/contactsServices.js";
@@ -8,17 +12,26 @@ import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
 const avatarsPath = path.resolve("public", "avatars");
 
 const createContact = async (req, res, next) => {
-  if (!req.file || !req.file.path || !req.file.filename) {
-    return next(HttpError(400, "No file uploaded or invalid file data"));
-  }
-
   try {
-    const { path: oldPath, filename } = req.file;
-    const newPath = path.join(avatarsPath, filename);
-    await fs.rename(oldPath, newPath);
+    const { name, email } = req.body;
+
+    const gravatarUrl = gravatar.url(
+      email,
+      {
+        s: "100",
+        r: "pg",
+        d: "retro",
+      },
+      true
+    );
+
     const { id: owner } = req.user;
-    const avatarURL = path.join("avatars", filename);
-    const result = await s.createContact({ ...req.body, avatarURL, owner });
+    const result = await s.createContact({
+      ...req.body,
+      avatarURL: gravatarUrl,
+      owner,
+    });
+
     res.status(201).json(result);
   } catch (error) {
     next(error);
