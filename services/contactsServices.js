@@ -1,7 +1,7 @@
 import dbContacts from "../db/models/dbContacts.js";
 
-export const getAllContacts = (query = {}, options = {}) => {
-  const { page = 1, limit = 20 } = options;
+export const getAllContacts = (query = {}, pagination = {}) => {
+  const { page = 1, limit = 20 } = pagination;
   const normalizedLimit = Number(limit);
   const offset = (Number(page) - 1) * normalizedLimit;
 
