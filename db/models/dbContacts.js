@@ -18,10 +18,6 @@ const dbContacts = sequelize.define("contact", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  avatarURL: {
-    type: DataTypes.STRING,
-    defaultValue: false,
-  },
   owner: {
     type: DataTypes.INTEGER,
     allowNull: false,

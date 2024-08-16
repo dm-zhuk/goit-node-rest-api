@@ -1,3 +1,6 @@
+import gravatar from "gravatar";
+import path from "node:path";
+import * as fs from "node:fs/promises";
 import * as authServices from "../services/authServices.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
@@ -7,11 +10,26 @@ import { getAllContacts } from "../services/contactsServices.js";
 import "dotenv/config";
 
 const { JWT_SECRET } = process.env;
+const avatarsPath = path.resolve("public", "avatars");
 
 const register = async (req, res, next) => {
   try {
     const { subscription = "starter", ...userData } = req.body;
-    const newUser = await authServices.register({ ...userData, subscription });
+    const gravatarUrl = gravatar.url(
+      userData.email,
+      {
+        s: "100",
+        r: "pg",
+        d: "identicon",
+      },
+      true
+    );
+
+    const newUser = await authServices.register({
+      ...userData,
+      subscription,
+      avatarURL: gravatarUrl,
+    });
 
     res.status(201).json({
       user: {
@@ -91,7 +109,24 @@ const changePlan = async (req, res, next) => {
       subscription: updatedUser.subscription,
     });
   } catch (error) {
-    next(HttpError(401, "Not authorized"));
+    next(HttpError(401, error.message));
+  }
+};
+
+const updateURL = async (req, res, next) => {
+  try {
+    const { id: user } = req.user;
+    const { path: oldPath, filename } = req.file;
+    const newPath = path.join(avatarsPath, filename);
+    await fs.rename(oldPath, newPath);
+    const avatarURL = path.join("avatars", filename);
+    const updatedStatus = await authServices.updateUser(
+      { id: user },
+      { avatarURL }
+    );
+    res.json({ avatarURL: updatedStatus.avatarURL });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -101,4 +136,5 @@ export default {
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
   changePlan: ctrlWrapper(changePlan),
+  updateURL: ctrlWrapper(updateURL),
 };

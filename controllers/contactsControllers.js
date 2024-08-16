@@ -1,42 +1,7 @@
-/* gravatar avatar -h
-gravatar avatar somebody@example.com */
-
-import gravatar from "gravatar";
-import path from "node:path";
-import * as fs from "node:fs/promises";
 import * as s from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import EmptyRequestBodyError from "../helpers/EmptyRequestBodyError.js";
-
-const avatarsPath = path.resolve("public", "avatars");
-
-const createContact = async (req, res, next) => {
-  try {
-    const { name, email } = req.body;
-
-    const gravatarUrl = gravatar.url(
-      email,
-      {
-        s: "100",
-        r: "pg",
-        d: "retro",
-      },
-      true
-    );
-
-    const { id: owner } = req.user;
-    const result = await s.createContact({
-      ...req.body,
-      avatarURL: gravatarUrl,
-      owner,
-    });
-
-    res.status(201).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
 
 const getContacts = async (req, res) => {
   const { id: owner } = req.user;
@@ -68,12 +33,17 @@ const deleteContact = async (req, res) => {
 
   const result = await s.removeContact({ id, owner });
   if (!result) {
-    throw HttpError(404, `Contact with id: ${id} not found`);
+    throw HttpError(404, `Contact with id ${id} not found`);
   }
 
-  res.json({
-    "Contact delete success": result,
-  });
+  res.json(`Contact with id ${id} removed successfuly`);
+};
+
+const createContact = async (req, res) => {
+  const { id: owner } = req.user;
+
+  const result = await s.createContact({ ...req.body, owner });
+  res.status(201).json(result);
 };
 
 const updateContactById = async (req, res) => {
