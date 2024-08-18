@@ -35,6 +35,7 @@ const register = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: gravatarUrl,
       },
     });
   } catch (error) {
@@ -45,28 +46,25 @@ const register = async (req, res, next) => {
   }
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await authServices.findUser({ email });
   if (!user) {
-    throw HttpError(401, "Email or password is wrong");
+    throw HttpError(401, "Email is wrong");
   }
   const passwordCompare = await bcryptjs.compare(password, user.password);
   if (!passwordCompare) {
-    throw HttpError(401, "Email or password is wrong");
+    throw HttpError(401, "Password is wrong");
   }
 
   const { id } = user;
-  const contacts = await getAllContacts({ owner: id });
-
   const payload = { id };
-
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "48h" });
   await authServices.updateUser({ id }, { token });
 
   res.json({
     token,
-    user: { email, subscription: user.subscription, contacts },
+    user: { email, subscription: user.subscription },
   });
 };
 
@@ -78,11 +76,14 @@ const logout = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { email, subscription } = req.user;
+  const { id, email, subscription, avatarURL } = req.user;
+  const contacts = await getAllContacts({ owner: id });
 
   res.json({
     email,
     subscription,
+    avatarURL,
+    contacts,
   });
 };
 
