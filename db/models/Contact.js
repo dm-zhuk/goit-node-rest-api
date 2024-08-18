@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 
-const dbContacts = sequelize.define("contact", {
+const Contact = sequelize.define("contact", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -24,6 +24,6 @@ const dbContacts = sequelize.define("contact", {
   },
 });
 
-// dbContacts.sync({ force: true });
+// Contact.sync({ force: true });
 
-export default dbContacts;
+export default Contact;

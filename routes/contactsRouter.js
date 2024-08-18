@@ -21,9 +21,9 @@ contactsRouter.get("/favorites", contactsControllers.getTrueFavorites);
 
 contactsRouter.get("/:id", contactsControllers.getOneContact);
 
-contactsRouter.delete("/:id", contactsControllers.deleteContact);
-
 contactsRouter.post("/", addMiddleWare, contactsControllers.createContact);
+
+contactsRouter.delete("/:id", contactsControllers.deleteContact);
 
 contactsRouter.put(
   "/:id",

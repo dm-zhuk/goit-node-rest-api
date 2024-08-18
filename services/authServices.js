@@ -8,7 +8,7 @@ export const updateUser = async (query, data) => {
   if (!user) {
     return null;
   }
-  return user.update(data, { returnig: true });
+  return user.update(data, { returning: true });
 };
 
 export const register = async (data) => {
@@ -24,3 +24,5 @@ export const register = async (data) => {
     throw error;
   }
 };
+
+export default { findUser, updateUser, register };
