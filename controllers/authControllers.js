@@ -35,7 +35,6 @@ const register = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
-        avatarURL: gravatarUrl,
       },
     });
   } catch (error) {
@@ -57,14 +56,14 @@ export const login = async (req, res) => {
     throw HttpError(401, "Password is wrong");
   }
 
-  const { id } = user;
+  const { id, subscription, avatarURL } = user;
   const payload = { id };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "48h" });
   await authServices.updateUser({ id }, { token });
 
   res.json({
     token,
-    user: { email, subscription: user.subscription },
+    user: { email, subscription, avatarURL },
   });
 };
 
