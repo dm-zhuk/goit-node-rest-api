@@ -15,11 +15,11 @@ export const updateUser = async (query, data) => {
   return user.update(data, { returning: true });
 };
 
-export const sendVerifyMail = (email, verificationCode) => {
+export const sendVerifyMail = (email, verificationToken) => {
   const verifyMail = {
     to: email,
     subject: "Verify email",
-    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}">Click to verify email</a>`,
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">Click to verify email</a>`,
   };
 
   return sendMail(verifyMail);
@@ -29,14 +29,14 @@ export const register = async (data) => {
   try {
     const { password } = data;
     const hashPassword = await bcryptjs.hash(password, 10);
-    const verificationCode = nanoid();
+    const verificationToken = nanoid();
     const newUser = await User.create({
       ...data,
       password: hashPassword,
-      verificationCode,
+      verificationToken,
     });
 
-    await sendVerifyMail(data.email, verificationCode);
+    await sendVerifyMail(data.email, verificationToken);
 
     return newUser;
   } catch (error) {

@@ -45,21 +45,21 @@ const register = async (req, res, next) => {
 };
 
 const verify = async (req, res) => {
-  const { verificationCode } = req.params;
-  const user = await authServices.findUser({ verificationCode });
+  const { verificationToken } = req.params;
+  const user = await authServices.findUser({ verificationToken });
   if (!user) {
-    throw HttpError(404, "User not found or already verified");
+    throw HttpError(404, "User not found");
   }
 
   await authServices.updateUser(
-    { verificationCode },
+    { verificationToken },
     {
       verify: true,
-      verificationCode: null,
+      verificationToken: null,
     }
   );
 
-  res.json({ message: "Email verified successfuly" });
+  res.json({ message: "Verification successful" });
 };
 
 const resendVerify = async (req, res) => {
@@ -69,12 +69,12 @@ const resendVerify = async (req, res) => {
     throw HttpError(404, "Email not found");
   }
   if (user.verify) {
-    throw HttpError(400, "Email already verified");
+    throw HttpError(400, "Verification has already been passed");
   }
 
-  await authServices.sendVerifyMail(user.email, user.verificationCode);
+  await authServices.sendVerifyMail(user.email, user.verificationToken);
 
-  res.json({ message: "Email verification resend successfuly" });
+  res.json({ message: "Verification email sent" });
 };
 
 const login = async (req, res) => {
