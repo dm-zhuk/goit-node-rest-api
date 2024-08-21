@@ -42,6 +42,14 @@ const User = sequelize.define("user", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  verify: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  verificationCode: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 // User.sync({ force: true });

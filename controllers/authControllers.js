@@ -7,7 +7,6 @@ import HttpError from "../helpers/HttpError.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { getAllContacts } from "../services/contactsServices.js";
-import "dotenv/config";
 
 const { JWT_SECRET } = process.env;
 const avatarsPath = path.resolve("public", "avatars");
@@ -45,11 +44,47 @@ const register = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res) => {
+const verify = async (req, res) => {
+  const { verificationCode } = req.params;
+  const user = await authServices.findUser({ verificationCode });
+  if (!user) {
+    throw HttpError(404, "User not found or already verified");
+  }
+
+  await authServices.updateUser(
+    { verificationCode },
+    {
+      verify: true,
+      verificationCode: null,
+    }
+  );
+
+  res.json({ message: "Email verified successfuly" });
+};
+
+const resendVerify = async (req, res) => {
+  const { email } = req.body;
+  const user = await authServices.findUser({ email });
+  if (!user) {
+    throw HttpError(404, "Email not found");
+  }
+  if (user.verify) {
+    throw HttpError(400, "Email already verified");
+  }
+
+  await authServices.sendVerifyMail(user.email, user.verificationCode);
+
+  res.json({ message: "Email verification resend successfuly" });
+};
+
+const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await authServices.findUser({ email });
   if (!user) {
     throw HttpError(401, "Email is wrong");
+  }
+  if (!user.verify) {
+    throw HttpError(401, "Email not verified");
   }
   const passwordCompare = await bcryptjs.compare(password, user.password);
   if (!passwordCompare) {
@@ -132,6 +167,8 @@ const updateURL = async (req, res, next) => {
 
 export default {
   register: ctrlWrapper(register),
+  verify: ctrlWrapper(verify),
+  resendVerify: ctrlWrapper(resendVerify),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
